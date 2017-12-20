@@ -9,18 +9,22 @@ body {
 
 .container-fluid {
     padding: 0px 50px;
+    margin-bottom: 125px;
 }
 
 #templates {
     display: none;
 }
 
-#title {
-    height: 200px;
+#titleBar {
+    height: 125px;
     width: 100%;
     position: fixed;
     bottom: 0px;
-    background: black;
+    background: rgba(0, 0, 0, 0.9);
     opacity: 0;
-    transition: opacity 0.5s;
+    transition: opacity 0.3s;
+    padding: 10px 30px;
+    font-size: 70px;
+    color: white;
 }

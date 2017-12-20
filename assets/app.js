@@ -49,13 +49,14 @@ function addPin(pin) {
 function onPinMouseOver(event) {
     var pinNode = event.target;
 
-    var titleDiv = document.querySelector("#title");
+    var titleBar = document.querySelector("#titleBar");
+    titleBar.style.opacity = 1;
 
-    titleDiv.style.opacity = 0.8;
+    var titleDiv = document.querySelector("#titleBar > #title");
     titleDiv.innerHTML = pinNode.alt;
 }
 
 function onPinMouseOut(event) {
-    var titleDiv = document.querySelector("#title");
-    titleDiv.style.opacity = 0;
+    var titleBar = document.querySelector("#titleBar");
+    titleBar.style.opacity = 0;
 }
