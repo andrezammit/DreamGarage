@@ -1,0 +1,16 @@
+body {
+    background: black;
+}
+
+.pin_thumb {
+    height: 200px;
+    margin: 1px;
+}
+
+.container-fluid {
+    padding: 0px 50px;
+}
+
+#templates {
+    display: none;
+}
