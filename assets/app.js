@@ -39,6 +39,23 @@ function addPin(pin) {
     newNode.setAttribute("alt", pin.note);
     newNode.setAttribute("src", pin.image.original.url);
 
+    newNode.addEventListener("mouseover", onPinMouseOver);
+    newNode.addEventListener("mouseout", onPinMouseOut);
+
     var container = document.querySelector(".container-fluid > .row");
     container.appendChild(newNode);
+}
+
+function onPinMouseOver(event) {
+    var pinNode = event.target;
+
+    var titleDiv = document.querySelector("#title");
+
+    titleDiv.style.opacity = 0.8;
+    titleDiv.innerHTML = pinNode.alt;
+}
+
+function onPinMouseOut(event) {
+    var titleDiv = document.querySelector("#title");
+    titleDiv.style.opacity = 0;
 }
