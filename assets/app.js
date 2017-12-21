@@ -1,6 +1,23 @@
+var isFullSizeMode = false;
+
 window.onload = function () {
+    setupKeyBindings();
     getPinterestData();
 };
+
+function setupKeyBindings()
+{
+    document.addEventListener("keydown",
+        function (event) {
+            if (event.keyCode == 27) {
+                onEscKeyPressed();
+            }
+        });
+}
+
+function onEscKeyPressed() {
+    hideFullSize();
+}
 
 function getPinterestData() {
     httpGetAsync("https://api.pinterest.com/v1/boards/andr4489/dream-garage/pins/?access_token=AUO5p-pxQMuomnDePDBjCcKIWZ5SFQHPqIBl_gVEj6glA6AxtgAAAAA&fields=note%2Cimage",
@@ -43,7 +60,7 @@ function addPin(pin) {
     newNode.setAttribute("alt", pin.note);
     newNode.setAttribute("src", getThumbUrl(pin));
 
-    newNode.addEventListener("onClick",
+    newNode.addEventListener("click",
         function (event) {
             showFullSize(event, pin);
         });
@@ -56,6 +73,10 @@ function addPin(pin) {
 }
 
 function onPinMouseOver(event) {
+    if (isFullSizeMode) {
+        return;
+    }
+
     var pinNode = event.target;
 
     var titleBar = document.querySelector("#titleBar");
@@ -66,6 +87,37 @@ function onPinMouseOver(event) {
 }
 
 function onPinMouseOut(event) {
+    if (isFullSizeMode) {
+        return;
+    }
+
     var titleBar = document.querySelector("#titleBar");
     titleBar.style.opacity = 0;
+}
+
+function showFullSize(event, pin) {
+    isFullSizeMode = true;
+
+    var container = document.querySelector("#fullSizeContainer");
+
+    var fullSizeImg = document.querySelector("#fullSizeImg > img");
+    fullSizeImg.setAttribute("src", pin.image.original.url);
+    
+    container.style.opacity = 1;
+    container.style.pointerEvents = "all";
+
+    var titleBar = document.querySelector("#titleBar");
+    titleBar.style.pointerEvents = "all";
+}
+
+function hideFullSize() {
+    var container = document.querySelector("#fullSizeContainer");
+
+    container.style.opacity = 0;
+    container.style.pointerEvents = "none";
+
+    var titleBar = document.querySelector("#titleBar");
+    titleBar.style.pointerEvents = "none";
+
+    isFullSizeMode = false;
 }
