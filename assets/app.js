@@ -32,15 +32,24 @@ function parseResponse(response) {
     });
 }
 
+function getThumbUrl(pin) {
+    return pin.image.original.url.replace("/originals/", "/736x/");
+}
+
 function addPin(pin) {
     var template = document.querySelector("#templates #pin_thumb > img");
     var newNode = template.cloneNode(true);
 
     newNode.setAttribute("alt", pin.note);
-    newNode.setAttribute("src", pin.image.original.url);
+    newNode.setAttribute("src", getThumbUrl(pin));
 
-    newNode.addEventListener("mouseover", onPinMouseOver);
+    newNode.addEventListener("onClick",
+        function (event) {
+            showFullSize(event, pin);
+        });
+
     newNode.addEventListener("mouseout", onPinMouseOut);
+    newNode.addEventListener("mouseover", onPinMouseOver);
 
     var container = document.querySelector(".container-fluid > .row");
     container.appendChild(newNode);
