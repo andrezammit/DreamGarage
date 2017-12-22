@@ -1,4 +1,6 @@
+var allPins = [];
 var isFullSizeMode = false;
+var startUrl = "https://api.pinterest.com/v1/boards/andr4489/dream-garage/pins/?access_token=AUO5p-pxQMuomnDePDBjCcKIWZ5SFQHPqIBl_gVEj6glA6AxtgAAAAA&fields=note%2Cimage";
 
 window.onload = function () {
     setupKeyBindings();
@@ -19,8 +21,12 @@ function onEscKeyPressed() {
     hideFullSize();
 }
 
-function getPinterestData() {
-    httpGetAsync("https://api.pinterest.com/v1/boards/andr4489/dream-garage/pins/?access_token=AUO5p-pxQMuomnDePDBjCcKIWZ5SFQHPqIBl_gVEj6glA6AxtgAAAAA&fields=note%2Cimage",
+function getPinterestData(url) {
+    if (url === undefined) {
+        url = startUrl;
+    }
+
+    httpGetAsync(url,
         function (response) {
             response = JSON.parse(response);
             parseResponse(response);
@@ -43,8 +49,20 @@ function parseResponse(response) {
     console.log(response);
 
     var pins = response.data;
+    allPins = allPins.concat(pins);
 
-    pins.forEach(function (pin) {
+    var nextPage = response.page.next;
+
+    if (nextPage !== null) {
+        getPinterestData(nextPage);
+        return;
+    }
+
+    showPins();
+}
+
+function showPins() {
+    allPins.forEach(function (pin) {
         addPin(pin);
     });
 }
