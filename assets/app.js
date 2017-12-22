@@ -62,7 +62,24 @@ function parseResponse(response) {
         return;
     }
 
+    allPins.sort(sortPins);
+
     showPins();
+}
+
+function sortPins(pinA, pinB) {
+    var noteA = pinA.note.toUpperCase();
+    var noteB = pinB.note.toUpperCase();
+
+    if (noteA < noteB) {
+        return -1;
+    } 
+
+    if (noteA > noteB) {
+        return 1;
+    }
+
+    return 0;
 }
 
 function showPins() {
