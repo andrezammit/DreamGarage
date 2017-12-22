@@ -1,5 +1,8 @@
 var allPins = [];
+
+var currentPinIndex = -1;
 var isFullSizeMode = false;
+
 var startUrl = "https://api.pinterest.com/v1/boards/andr4489/dream-garage/pins/?access_token=AUO5p-pxQMuomnDePDBjCcKIWZ5SFQHPqIBl_gVEj6glA6AxtgAAAAA&fields=note%2Cimage";
 
 window.onload = function () {
@@ -11,18 +14,49 @@ window.onload = function () {
     getPinterestData();
 };
 
-function setupKeyBindings()
-{
-    document.addEventListener("keydown",
-        function (event) {
-            if (event.keyCode == 27) {
-                onEscKeyPressed();
-            }
-        });
+function setupKeyBindings() {
+    document.addEventListener("keydown", onKeyDown);
+}
+
+function onKeyDown(event) {
+    switch (event.keyCode)
+    {
+    case 27: // Escape
+        onEscKeyPressed();
+        break;
+
+    case 37: // Left arrow
+        onLeftArrowPressed();
+        break;
+
+    case 39: // Right arrow
+        onRightArrowPressed();
+        break;
+    }
 }
 
 function onEscKeyPressed() {
     hideFullSize();
+}
+
+function onLeftArrowPressed() {
+    var index = currentPinIndex - 1;
+
+    if (index < 0) {
+        return;
+    }
+
+    showFullSize(allPins[index], index);
+}
+
+function onRightArrowPressed() {
+    var index = currentPinIndex + 1;
+
+    if (index < 0) {
+        return;
+    }
+
+    showFullSize(allPins[index], index);
 }
 
 function getPinterestData(url) {
@@ -83,16 +117,14 @@ function sortPins(pinA, pinB) {
 }
 
 function showPins() {
-    allPins.forEach(function (pin) {
-        addPin(pin);
-    });
+    allPins.forEach(addPin);
 }
 
 function getThumbUrl(pin) {
     return pin.image.original.url.replace("/originals/", "/736x/");
 }
 
-function addPin(pin) {
+function addPin(pin, index) {
     var template = document.querySelector("#templates #pin_thumb > img");
     var newNode = template.cloneNode(true);
 
@@ -101,7 +133,7 @@ function addPin(pin) {
 
     newNode.addEventListener("click",
         function (event) {
-            showFullSize(event, pin);
+            showFullSize(pin, index);
         });
 
     newNode.addEventListener("mouseout", onPinMouseOut);
@@ -134,8 +166,9 @@ function onPinMouseOut(event) {
     titleBar.style.opacity = 0;
 }
 
-function showFullSize(event, pin) {
+function showFullSize(pin, index) {
     isFullSizeMode = true;
+    currentPinIndex = index;
 
     var container = document.querySelector("#fullSizeContainer");
 
@@ -148,10 +181,17 @@ function showFullSize(event, pin) {
     var titleBar = document.querySelector("#titleBar");
     titleBar.style.pointerEvents = "all";
 
+    var titleDiv = document.querySelector("#titleBar > #title");
+    titleDiv.innerHTML = pin.note;
+    
     titleBar.addEventListener("click", hideFullSize);
 }
 
 function hideFullSize() {
+    if (!isFullSizeMode) {
+        return;
+    }
+
     var container = document.querySelector("#fullSizeContainer");
 
     container.style.opacity = 0;
@@ -163,4 +203,5 @@ function hideFullSize() {
     titleBar.removeEventListener("click", hideFullSize);
     
     isFullSizeMode = false;
+    currentPinIndex = -1;    
 }
