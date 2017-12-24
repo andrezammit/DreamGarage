@@ -173,8 +173,16 @@ function showFullSize(pin, index) {
     var container = document.querySelector("#fullSizeContainer");
 
     var fullSizeImg = document.querySelector("#fullSizeImg > img");
-    fullSizeImg.setAttribute("src", pin.image.original.url);
+    fullSizeImg.setAttribute("src", "assets/gear.gif");
+
+    var downloadingImage = new Image();
+
+    downloadingImage.onload = function () {
+        fullSizeImg.setAttribute("src", this.src);
+    };
     
+    downloadingImage.src = pin.image.original.url;
+
     container.style.opacity = 1;
     container.style.pointerEvents = "all";
 
