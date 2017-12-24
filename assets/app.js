@@ -3,17 +3,24 @@ var allPins = [];
 var currentPinIndex = -1;
 var isFullSizeMode = false;
 
-var startUrl = "https://api.pinterest.com/v1/boards/andr4489/dream-garage/pins/?access_token=AUO5p-pxQMuomnDePDBjCcKIWZ5SFQHPqIBl_gVEj6glA6AxtgAAAAA&fields=note%2Cimage";
+var fields = "note%2Cimage";
+var board = "andr4489/dream-garage";
+var access_token = "AUO5p-pxQMuomnDePDBjCcKIWZ5SFQHPqIBl_gVEj6glA6AxtgAAAAA";
+
+var startUrl = "https://api.pinterest.com/v1/boards/" + board + "/pins/?access_token=" + access_token + "&fields=" + fields;
 
 window.onload = function () {
     setupKeyBindings();
+    setupClickBindings();
     setupGestureSupport();
-
-    var fullSizeContainer = document.querySelector("#fullSizeContainer");
-    fullSizeContainer.addEventListener("click", hideFullSize);
 
     getPinterestData();
 };
+
+function setupClickBindings() {
+    var fullSizeContainer = document.querySelector("#fullSizeContainer");
+    fullSizeContainer.addEventListener("click", hideFullSize);
+}
 
 function setupKeyBindings() {
     document.addEventListener("keydown", onKeyDown);
@@ -24,34 +31,32 @@ function setupGestureSupport() {
 
     var hammertime = new Hammer(fullSizeContainer);
 
-    hammertime.on("swipe", function(event) {
-        switch (event.direction)
-        {
-        case Hammer.DIRECTION_LEFT:
-            onRightArrowPressed();
-            break;
+    hammertime.on("swipe", function (event) {
+        switch (event.direction) {
+            case Hammer.DIRECTION_LEFT:
+                onRightArrowPressed();
+                break;
 
-        case Hammer.DIRECTION_RIGHT:
-            onLeftArrowPressed();
-            break;
+            case Hammer.DIRECTION_RIGHT:
+                onLeftArrowPressed();
+                break;
         }
     });
 }
 
 function onKeyDown(event) {
-    switch (event.keyCode)
-    {
-    case 27: // Escape
-        onEscKeyPressed();
-        break;
+    switch (event.keyCode) {
+        case 27: // Escape
+            onEscKeyPressed();
+            break;
 
-    case 37: // Left arrow
-        onLeftArrowPressed();
-        break;
+        case 37: // Left arrow
+            onLeftArrowPressed();
+            break;
 
-    case 39: // Right arrow
-        onRightArrowPressed();
-        break;
+        case 39: // Right arrow
+            onRightArrowPressed();
+            break;
     }
 }
 
@@ -99,7 +104,7 @@ function httpGetAsync(theUrl, callback) {
             callback(xmlHttp.responseText);
     };
 
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.open("GET", theUrl, true);
     xmlHttp.send(null);
 }
 
@@ -127,7 +132,7 @@ function sortPins(pinA, pinB) {
 
     if (noteA < noteB) {
         return -1;
-    } 
+    }
 
     if (noteA > noteB) {
         return 1;
@@ -200,7 +205,7 @@ function showFullSize(pin, index) {
     downloadingImage.onload = function () {
         fullSizeImg.setAttribute("src", this.src);
     };
-    
+
     downloadingImage.src = pin.image.original.url;
 
     container.style.opacity = 1;
@@ -211,7 +216,7 @@ function showFullSize(pin, index) {
 
     var titleDiv = document.querySelector("#titleBar > #title");
     titleDiv.innerHTML = pin.note;
-    
+
     titleBar.addEventListener("click", hideFullSize);
 }
 
@@ -229,7 +234,7 @@ function hideFullSize() {
     titleBar.style.pointerEvents = "none";
 
     titleBar.removeEventListener("click", hideFullSize);
-    
+
     isFullSizeMode = false;
-    currentPinIndex = -1;    
+    currentPinIndex = -1;
 }
