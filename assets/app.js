@@ -7,6 +7,7 @@ var startUrl = "https://api.pinterest.com/v1/boards/andr4489/dream-garage/pins/?
 
 window.onload = function () {
     setupKeyBindings();
+    setupGestureSupport();
 
     var fullSizeContainer = document.querySelector("#fullSizeContainer");
     fullSizeContainer.addEventListener("click", hideFullSize);
@@ -16,6 +17,25 @@ window.onload = function () {
 
 function setupKeyBindings() {
     document.addEventListener("keydown", onKeyDown);
+}
+
+function setupGestureSupport() {
+    var fullSizeContainer = document.querySelector("#fullSizeContainer");
+
+    var hammertime = new Hammer(fullSizeContainer);
+
+    hammertime.on("swipe", function(event) {
+        switch (event.direction)
+        {
+        case Hammer.DIRECTION_LEFT:
+            onRightArrowPressed();
+            break;
+
+        case Hammer.DIRECTION_RIGHT:
+            onLeftArrowPressed();
+            break;
+        }
+    });
 }
 
 function onKeyDown(event) {
