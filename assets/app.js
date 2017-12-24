@@ -52,7 +52,7 @@ function onLeftArrowPressed() {
 function onRightArrowPressed() {
     var index = currentPinIndex + 1;
 
-    if (index < 0) {
+    if (index > allPins.length - 1) {
         return;
     }
 
