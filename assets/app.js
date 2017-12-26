@@ -19,6 +19,19 @@ var DreamGarage = (function () {
     var pinEnumUrl = "";
     var boardInfoUrl = "";
 
+    var cachedElements = {};
+
+    function cacheElements() {
+        cachedElements.header = document.querySelector("#header");
+        cachedElements.titleBar = document.querySelector("#titleBar");
+        cachedElements.fullSizeImg = document.querySelector("#fullSizeImg > img");
+        cachedElements.titleBarDiv = document.querySelector("#titleBar > #title");
+        cachedElements.pinContainer = document.querySelector(".container-fluid > .row");
+        cachedElements.titleBarText = document.querySelector("#titleBar > #title span");
+        cachedElements.fullSizeContainer = document.querySelector("#fullSizeContainer");
+        cachedElements.pinTemplate = document.querySelector("#templates #pin_thumb > img");
+    }
+
     function checkforCustomBoard() {
         if (queryStringParams.board !== undefined) {
             board = queryStringParams.board;
@@ -33,8 +46,7 @@ var DreamGarage = (function () {
     }
 
     function setupClickBindings() {
-        var fullSizeContainer = document.querySelector("#fullSizeContainer");
-        fullSizeContainer.addEventListener("click", hideFullSize);
+        cachedElements.fullSizeContainer.addEventListener("click", hideFullSize);
     }
 
     function setupKeyBindings() {
@@ -42,9 +54,7 @@ var DreamGarage = (function () {
     }
 
     function setupGestureSupport() {
-        var fullSizeContainer = document.querySelector("#fullSizeContainer");
-
-        var hammertime = new Hammer(fullSizeContainer);
+        var hammertime = new Hammer(cachedElements.fullSizeContainer);
 
         hammertime.on("swipe", function (event) {
             switch (event.direction) {
@@ -149,9 +159,7 @@ var DreamGarage = (function () {
             headerText = response.data.name;
         }
 
-        var header = document.querySelector("#header");
-        header.innerHTML = headerText;
-
+        cachedElements.header.innerHTML = headerText;
         document.title = headerText;
     }
 
@@ -202,8 +210,7 @@ var DreamGarage = (function () {
     }
 
     function addPin(pin, index) {
-        var template = document.querySelector("#templates #pin_thumb > img");
-        var newNode = template.cloneNode(true);
+        var newNode = cachedElements.pinTemplate.cloneNode(true);
 
         newNode.setAttribute("alt", pin.note);
         newNode.setAttribute("src", getThumbUrl(pin));
@@ -216,8 +223,7 @@ var DreamGarage = (function () {
         newNode.addEventListener("mouseout", onPinMouseOut);
         newNode.addEventListener("mouseover", onPinMouseOver);
 
-        var container = document.querySelector(".container-fluid > .row");
-        container.appendChild(newNode);
+        cachedElements.pinContainer.appendChild(newNode);
     }
 
     function onPinMouseOver(event) {
@@ -225,13 +231,10 @@ var DreamGarage = (function () {
             return;
         }
 
+        cachedElements.titleBar.style.opacity = 1;
+        
         var pinNode = event.target;
-
-        var titleBar = document.querySelector("#titleBar");
-        titleBar.style.opacity = 1;
-
-        var titleDiv = document.querySelector("#titleBar > #title span");
-        titleDiv.innerHTML = pinNode.alt;
+        cachedElements.titleBarText.innerHTML = pinNode.alt;
 
         updateTextFill();        
     }
@@ -241,18 +244,14 @@ var DreamGarage = (function () {
             return;
         }
 
-        var titleBar = document.querySelector("#titleBar");
-        titleBar.style.opacity = 0;
+        cachedElements.titleBar.style.opacity = 0;
     }
 
     function showFullSize(pin, index) {
         isFullSizeMode = true;
         currentPinIndex = index;
 
-        var container = document.querySelector("#fullSizeContainer");
-
-        var fullSizeImg = document.querySelector("#fullSizeImg > img");
-        fullSizeImg.setAttribute("src", "assets/gear.gif");
+        cachedElements.fullSizeImg.setAttribute("src", "assets/gear.gif");
 
         var downloadingImage = new Image();
 
@@ -262,14 +261,11 @@ var DreamGarage = (function () {
 
         downloadingImage.src = pin.image.original.url;
 
-        container.style.opacity = 1;
-        container.style.pointerEvents = "all";
+        cachedElements.pinContainer.style.opacity = 1;
+        cachedElements.pinContainer.style.pointerEvents = "all";
 
-        var titleBar = document.querySelector("#titleBar");
-        titleBar.style.pointerEvents = "all";
-
-        var titleDiv = document.querySelector("#titleBar > #title span");
-        titleDiv.innerHTML = pin.note;
+        cachedElements.titleBar.style.pointerEvents = "all";
+        cachedElements.titleBarText.innerHTML = pin.note;
 
         updateTextFill();
         
@@ -281,17 +277,13 @@ var DreamGarage = (function () {
             return;
         }
 
-        var container = document.querySelector("#fullSizeContainer");
+        cachedElements.pinContainer.style.opacity = 0;
+        cachedElements.pinContainer.style.pointerEvents = "none";
 
-        container.style.opacity = 0;
-        container.style.pointerEvents = "none";
+        cachedElements.titleBar.style.opacity = 0;
+        cachedElements.titleBar.style.pointerEvents = "none";
 
-        var titleBar = document.querySelector("#titleBar");
-
-        titleBar.style.opacity = 0;
-        titleBar.style.pointerEvents = "none";
-
-        titleBar.removeEventListener("click", hideFullSize);
+        cachedElements.titleBar.removeEventListener("click", hideFullSize);
 
         isFullSizeMode = false;
         currentPinIndex = -1;
@@ -315,13 +307,15 @@ var DreamGarage = (function () {
 
     function updateTextFill()
     {
-        $("#titleBar > #title").textfill({
+        $(cachedElements.titleBarDiv).textfill({
             maxFontPixels: 70
         });
     }
 
     return {
         startApp: function () {
+            cacheElements();
+            
             parseQueryStringParams();
             checkforCustomBoard();
             setPinterestUrls();
