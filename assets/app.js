@@ -266,13 +266,13 @@ var DreamGarage = (function () {
         var downloadingImage = new Image();
 
         downloadingImage.onload = function () {
-            fullSizeImg.setAttribute("src", this.src);
+            cachedElements.fullSizeImg.setAttribute("src", this.src);
         };
 
         downloadingImage.src = pin.image.original.url;
 
-        cachedElements.pinContainer.style.opacity = 1;
-        cachedElements.pinContainer.style.pointerEvents = "all";
+        cachedElements.fullSizeContainer.style.opacity = 1;
+        cachedElements.fullSizeContainer.style.pointerEvents = "all";
 
         cachedElements.titleBar.style.pointerEvents = "all";
 
@@ -286,8 +286,8 @@ var DreamGarage = (function () {
             return;
         }
 
-        cachedElements.pinContainer.style.opacity = 0;
-        cachedElements.pinContainer.style.pointerEvents = "none";
+        cachedElements.fullSizeContainer.style.opacity = 0;
+        cachedElements.fullSizeContainer.style.pointerEvents = "none";
 
         cachedElements.titleBar.style.opacity = 0;
         cachedElements.titleBar.style.pointerEvents = "none";
