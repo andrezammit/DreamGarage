@@ -19,6 +19,8 @@ var DreamGarage = (function () {
     var pinEnumUrl = "";
     var boardInfoUrl = "";
 
+    var titleBarFontSize = 0;
+
     var cachedElements = {};
 
     function cacheElements() {
@@ -30,6 +32,11 @@ var DreamGarage = (function () {
         cachedElements.titleBarText = document.querySelector("#titleBar > #title span");
         cachedElements.fullSizeContainer = document.querySelector("#fullSizeContainer");
         cachedElements.pinTemplate = document.querySelector("#templates #pin_thumb > img");
+    }
+
+    function setupTextFill() {
+        var style = window.getComputedStyle(cachedElements.titleBarDiv);
+        titleBarFontSize = parseInt(style.fontSize);
     }
 
     function checkforCustomBoard() {
@@ -308,18 +315,19 @@ var DreamGarage = (function () {
     function updateTextFill()
     {
         $(cachedElements.titleBarDiv).textfill({
-            maxFontPixels: 70
+            maxFontPixels: titleBarFontSize
         });
     }
 
     return {
         startApp: function () {
             cacheElements();
-            
+
             parseQueryStringParams();
             checkforCustomBoard();
             setPinterestUrls();
 
+            setupTextFill();
             setupKeyBindings();
             setupClickBindings();
             setupGestureSupport();
