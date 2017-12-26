@@ -2,6 +2,10 @@ window.onload = function () {
    DreamGarage.startApp();
 };
 
+window.onresize = function() {
+    DreamGarage.onResize();
+};
+
 var DreamGarage = (function () {
     var allPins = [];
     var queryStringParams = {};
@@ -19,13 +23,18 @@ var DreamGarage = (function () {
     var pinEnumUrl = "";
     var boardInfoUrl = "";
 
+    var headerFontSize = 0;
     var titleBarFontSize = 0;
+
+    var isScrollBarVisible = false;
 
     var cachedElements = {};
 
     function cacheElements() {
+        cachedElements.body = document.querySelector("body");
         cachedElements.header = document.querySelector("#header");
         cachedElements.titleBar = document.querySelector("#titleBar");
+        cachedElements.headerText = document.querySelector("#header > span");
         cachedElements.fullSizeImg = document.querySelector("#fullSizeImg > img");
         cachedElements.titleBarDiv = document.querySelector("#titleBar > #title");
         cachedElements.pinContainer = document.querySelector(".container-fluid > .row");
@@ -37,6 +46,9 @@ var DreamGarage = (function () {
     function setupTextFill() {
         var style = window.getComputedStyle(cachedElements.titleBarDiv);
         titleBarFontSize = parseInt(style.fontSize);
+
+        style = window.getComputedStyle(cachedElements.header);
+        headerFontSize = parseInt(style.fontSize);
     }
 
     function checkforCustomBoard() {
@@ -114,7 +126,7 @@ var DreamGarage = (function () {
         if (!isFullSizeMode) {
             return;
         }
-        
+
         var index = currentPinIndex + 1;
 
         if (index > allPins.length - 1) {
@@ -163,8 +175,6 @@ var DreamGarage = (function () {
     }
 
     function parseBoardInfoResponse(response) {
-        console.log(response);
-
         var headerText;
 
         if (response.message !== undefined) {
@@ -174,13 +184,13 @@ var DreamGarage = (function () {
             headerText = response.data.name;
         }
 
-        cachedElements.header.innerHTML = headerText;
+        cachedElements.headerText.innerHTML = headerText;
         document.title = headerText;
+
+        updateTextFill();        
     }
 
     function parsePinEnumResponse(response) {
-        console.log(response);
-
         var pins = response.data;
 
         if (pins === undefined) {
@@ -224,12 +234,40 @@ var DreamGarage = (function () {
         return pin.image.original.url.replace("/originals/", "/736x/");
     }
 
+    function scrollBarCheck() {
+        return cachedElements.body.scrollHeight > window.innerHeight;
+    }
+
+    function onImageLoaded() {
+        if (isScrollBarVisible) {
+            return;
+        }
+
+        if (scrollBarCheck()) {
+            isScrollBarVisible = true;
+            updateTextFill();
+        }
+    }
+
     function addPin(pin, index) {
         var newNode = cachedElements.pinTemplate.cloneNode(true);
 
         newNode.setAttribute("alt", pin.note);
         newNode.setAttribute("src", getThumbUrl(pin));
 
+        var downloadingImage = new Image();
+
+        downloadingImage.onload = function () {
+            newNode.setAttribute("src", this.src);
+            onImageLoaded();
+        };
+
+        downloadingImage.onerror = function() {
+            onImageLoaded();
+        };
+
+        downloadingImage.src = getThumbUrl(pin);
+        
         newNode.addEventListener("click",
             function (event) {
                 showFullSize(pin, index);
@@ -322,10 +360,13 @@ var DreamGarage = (function () {
         });
     }
 
-    function updateTextFill()
-    {
+    function updateTextFill() {
         $(cachedElements.titleBarDiv).textfill({
             maxFontPixels: titleBarFontSize
+        });
+
+        $(cachedElements.header).textfill({
+            maxFontPixels: headerFontSize
         });
     }
 
@@ -344,6 +385,10 @@ var DreamGarage = (function () {
 
             getBoardInfo();
             getPinterestData();
+        },
+
+        onResize: function() {
+            updateTextFill();
         }
     };
 })();
