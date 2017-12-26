@@ -97,6 +97,10 @@ var DreamGarage = (function () {
     }
 
     function onLeftArrowPressed() {
+        if (!isFullSizeMode) {
+            return;
+        }
+
         var index = currentPinIndex - 1;
 
         if (index < 0) {
@@ -107,6 +111,10 @@ var DreamGarage = (function () {
     }
 
     function onRightArrowPressed() {
+        if (!isFullSizeMode) {
+            return;
+        }
+        
         var index = currentPinIndex + 1;
 
         if (index > allPins.length - 1) {
