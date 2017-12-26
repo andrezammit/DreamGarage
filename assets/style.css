@@ -43,6 +43,11 @@ body {
     pointer-events: none;
 }
 
+#titleBar > #title {
+    width: 100%;
+    height: 100%;
+}
+
 #fullSizeContainer {
     position: fixed;
     width: 100%;

@@ -230,8 +230,10 @@ var DreamGarage = (function () {
         var titleBar = document.querySelector("#titleBar");
         titleBar.style.opacity = 1;
 
-        var titleDiv = document.querySelector("#titleBar > #title");
+        var titleDiv = document.querySelector("#titleBar > #title span");
         titleDiv.innerHTML = pinNode.alt;
+
+        updateTextFill();        
     }
 
     function onPinMouseOut(event) {
@@ -266,9 +268,11 @@ var DreamGarage = (function () {
         var titleBar = document.querySelector("#titleBar");
         titleBar.style.pointerEvents = "all";
 
-        var titleDiv = document.querySelector("#titleBar > #title");
+        var titleDiv = document.querySelector("#titleBar > #title span");
         titleDiv.innerHTML = pin.note;
 
+        updateTextFill();
+        
         titleBar.addEventListener("click", hideFullSize);
     }
 
@@ -306,6 +310,13 @@ var DreamGarage = (function () {
             var value = parsedParam[1];
 
             queryStringParams[key] = value;
+        });
+    }
+
+    function updateTextFill()
+    {
+        $("#titleBar > #title").textfill({
+            maxFontPixels: 70
         });
     }
 
