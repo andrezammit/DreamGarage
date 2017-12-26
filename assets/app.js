@@ -233,6 +233,11 @@ var DreamGarage = (function () {
         cachedElements.pinContainer.appendChild(newNode);
     }
 
+    function updateTitlebarText(text) {
+        cachedElements.titleBarText.innerHTML = text;
+        updateTextFill();
+    }
+
     function onPinMouseOver(event) {
         if (isFullSizeMode) {
             return;
@@ -241,9 +246,7 @@ var DreamGarage = (function () {
         cachedElements.titleBar.style.opacity = 1;
         
         var pinNode = event.target;
-        cachedElements.titleBarText.innerHTML = pinNode.alt;
-
-        updateTextFill();        
+        updateTitlebarText(pinNode.alt);
     }
 
     function onPinMouseOut(event) {
@@ -272,9 +275,8 @@ var DreamGarage = (function () {
         cachedElements.pinContainer.style.pointerEvents = "all";
 
         cachedElements.titleBar.style.pointerEvents = "all";
-        cachedElements.titleBarText.innerHTML = pin.note;
 
-        updateTextFill();
+        updateTitlebarText(pin.note);
         
         titleBar.addEventListener("click", hideFullSize);
     }
