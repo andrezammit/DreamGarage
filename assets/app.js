@@ -231,6 +231,8 @@ function hideFullSize() {
     container.style.pointerEvents = "none";
 
     var titleBar = document.querySelector("#titleBar");
+
+    titleBar.style.opacity = 0;
     titleBar.style.pointerEvents = "none";
 
     titleBar.removeEventListener("click", hideFullSize);
