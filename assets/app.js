@@ -1,21 +1,44 @@
 var allPins = [];
+var queryStringParams = {};
 
 var currentPinIndex = -1;
 var isFullSizeMode = false;
 
-var fields = "note%2Cimage";
+var pinEnumFields = "note%2Cimage";
+var boardInfoFields = "name%2Curl";
+
 var board = "andr4489/dream-garage";
 var access_token = "AUO5p-pxQMuomnDePDBjCcKIWZ5SFQHPqIBl_gVEj6glA6AxtgAAAAA";
 
-var startUrl = "https://api.pinterest.com/v1/boards/" + board + "/pins/?access_token=" + access_token + "&fields=" + fields;
+var baseUrl = "";
+var pinEnumUrl = "";
+var boardInfoUrl = "";
 
 window.onload = function () {
+    parseQueryStringParams();
+    checkforCustomBoard();
+    setPinterestUrls();
+
     setupKeyBindings();
     setupClickBindings();
     setupGestureSupport();
 
+    getBoardInfo();
     getPinterestData();
 };
+
+function checkforCustomBoard() {
+    if (queryStringParams.board !== undefined) {
+        board = queryStringParams.board;
+    }
+}
+
+function setPinterestUrls() {
+    baseUrl = "https://api.pinterest.com/v1/boards/" + board;
+
+    pinEnumUrl = baseUrl + "/pins/?access_token=" + access_token + "&fields=" + pinEnumFields;
+    boardInfoUrl = baseUrl + "/?access_token=" + access_token + "&fields=" + boardInfoFields;
+}
 
 function setupClickBindings() {
     var fullSizeContainer = document.querySelector("#fullSizeContainer");
@@ -84,15 +107,29 @@ function onRightArrowPressed() {
     showFullSize(allPins[index], index);
 }
 
+function getBoardInfo() {
+    httpGetAsync(boardInfoUrl,
+        function (response) {
+            if (response !== "") {
+                response = JSON.parse(response);
+            }
+            else {
+                response = { message: "Board not found."};
+            }
+
+            parseBoardInfoResponse(response);
+        });
+}
+
 function getPinterestData(url) {
     if (url === undefined) {
-        url = startUrl;
+        url = pinEnumUrl;
     }
 
     httpGetAsync(url,
         function (response) {
             response = JSON.parse(response);
-            parseResponse(response);
+            parsePinEnumResponse(response);
         });
 }
 
@@ -100,7 +137,7 @@ function httpGetAsync(theUrl, callback) {
     var xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+        if (xmlHttp.readyState == 4)
             callback(xmlHttp.responseText);
     };
 
@@ -108,10 +145,33 @@ function httpGetAsync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
-function parseResponse(response) {
+function parseBoardInfoResponse(response) {
+    console.log(response);
+
+    var headerText;
+
+    if (response.message !== undefined) {
+        headerText = response.message;
+    }
+    else {
+        headerText = response.data.name;
+    }
+
+    var header = document.querySelector("#header");
+    header.innerHTML = headerText;
+
+    document.title = headerText;
+}
+
+function parsePinEnumResponse(response) {
     console.log(response);
 
     var pins = response.data;
+
+    if (pins === undefined) {
+        return;
+    }
+
     allPins = allPins.concat(pins);
 
     var nextPage = response.page.next;
@@ -239,4 +299,20 @@ function hideFullSize() {
 
     isFullSizeMode = false;
     currentPinIndex = -1;
+}
+
+function parseQueryStringParams() {
+    var location = window.location.href;
+
+    var pos = location.indexOf('?') + 1;
+    var rawParams = location.slice(pos).split('&');
+
+    rawParams.forEach(function(rawParam, index) {
+        var parsedParam = rawParam.split('=');
+
+        var key = parsedParam[0];
+        var value = parsedParam[1];
+
+        queryStringParams[key] = value;
+    });
 }
