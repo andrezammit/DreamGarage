@@ -15,6 +15,11 @@ body {
     align-items: center;
 }
 
+#header > a {
+    text-decoration: none;
+    color: white;
+}
+
 .pin_thumb {
     height: 200px;
     margin: 1px;

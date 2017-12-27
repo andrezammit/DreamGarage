@@ -34,7 +34,7 @@ var DreamGarage = (function () {
         cachedElements.body = document.querySelector("body");
         cachedElements.header = document.querySelector("#header");
         cachedElements.titleBar = document.querySelector("#titleBar");
-        cachedElements.headerText = document.querySelector("#header > span");
+        cachedElements.headerText = document.querySelector("#header > a");
         cachedElements.fullSizeImg = document.querySelector("#fullSizeImg > img");
         cachedElements.titleBarDiv = document.querySelector("#titleBar > #title");
         cachedElements.pinContainer = document.querySelector(".container-fluid > .row");
@@ -182,6 +182,8 @@ var DreamGarage = (function () {
         }
         else {
             headerText = response.data.name;
+
+            cachedElements.headerText.setAttribute("href", response.data.url);
         }
 
         cachedElements.headerText.innerHTML = headerText;
@@ -366,6 +368,7 @@ var DreamGarage = (function () {
         });
 
         $(cachedElements.header).textfill({
+            innerTag: "a",
             maxFontPixels: headerFontSize
         });
     }
