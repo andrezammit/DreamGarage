@@ -308,7 +308,6 @@ var DreamGarage = (function () {
             return;
         }
 
-        console.log(event);
         cachedElements.titleBar.style.opacity = 0;
     }
 
