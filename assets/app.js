@@ -302,6 +302,13 @@ var DreamGarage = (function () {
             return;
         }
 
+        var classList = event.toElement.classList;
+
+        if (classList.contains("pin_thumb")) {
+            return;
+        }
+
+        console.log(event);
         cachedElements.titleBar.style.opacity = 0;
     }
 
