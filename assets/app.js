@@ -166,8 +166,9 @@ var DreamGarage = (function () {
         var xmlHttp = new XMLHttpRequest();
 
         xmlHttp.onreadystatechange = function () {
-            if (xmlHttp.readyState == 4)
+            if (xmlHttp.readyState == 4) {
                 callback(xmlHttp.responseText);
+            }
         };
 
         xmlHttp.open("GET", theUrl, true);
