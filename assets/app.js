@@ -17,7 +17,7 @@ var DreamGarage = (function () {
     var boardInfoFields = "name%2Curl";
 
     var board = "andr4489/dream-garage";
-    var access_token = "AUO5p-pxQMuomnDePDBjCcKIWZ5SFQHPqIBl_gVEj6glA6AxtgAAAAA";
+    var access_token = "ATaJ2XayZy05kwu17bV68ZSIJ4uuFSwnCJX1dSlE6HUocyA3wAAAAAA";
 
     var baseUrl = "";
     var pinEnumUrl = "";
